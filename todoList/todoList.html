@@ -1,0 +1,53 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Nimbusbase TodoList</title>
+		<link rel="stylesheet" href="bootstrap.min.css">
+		
+		<script src="http://nimbusbase.com/static/nimbus.min.js"></script>
+		
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+        <script src="http://cdn.bootcss.com/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+   		<style type="text/css">
+			#loginView {
+				text-align: center;
+				margin-top: 5em;
+			}
+			#loginView a {
+				margin-top: 1em;
+			}
+			#todoListView {
+				display: none;
+				text-align: center;
+				margin-top: 5em;
+			}
+			#logout {
+				margin-top: -8em;
+				margin-left: 9em;
+			}
+   		</style>
+	</head>
+	<body ng-app="todoApp">
+		<section id="loginView" ng-controller="LoginController">
+			<h1>Nimbus based to do List</h1>
+			<a class="btn btn-success" ng-click="loginAction('Dropbox')">Login With DropBox</a>
+		</br>
+			<a class="btn btn-success" ng-click="loginAction('GDrive')">Login With Google Drive</a>
+		</section>
+
+		<section id="todoListView" ng-controller="todoListViewController">
+			<h1>Todo List</h1>
+			<a id="logout" ng-click="logout()" class="btn btn-danger">Log out</a>
+		</section>
+
+		<script src="jquery.js"></script>
+		<script src="bootstrap.min.js"></script>
+		<script src="angular.min.js"></script>
+		<script src="todoList_nimbusHandler.js"></script>
+		<script src="todoList.js"></script>
+			</body>
+</html>
