@@ -4,43 +4,16 @@
 
   todoApp = angular.module('todoApp', []);
 
-  todoApp.factory('isAuthorized', function() {
-    var show, todoList;
-    if ((window.todoList != null) && window.todoList !== "undefined") {
-      todoList = window.todoList;
-      show = todoList.authorized();
-    } else {
-      show = false;
-    }
-    alert("isAuthorized:" + show);
-    return show;
-  });
-
-  todoApp.controller('LoginController', function($scope, isAuthorized) {
-    var watchFn;
-    $scope.show = isAuthorized;
-    $scope.loginAction = function(model) {
-      var todoList;
-      todoList = window.todoList;
-      switch (model) {
-        case "Dropbox":
-          todoList.authorize('Dropbox');
-          break;
-        case "GDrive":
-          todoList.authorize('GDrive');
-          break;
-        default:
-          console.error("loginAction request either Dropbox or GDrive only");
-      }
-      return todoList.authorized_callback(function() {
-        return console.log("authorized!");
-      });
-    };
-    watchFn = function() {
-      if ($scope.show) {
+  todoApp.controller('todoListController', function($scope) {
+    var Todos, init;
+    Todos = [];
+    $scope.todos = [];
+    $scope.newTodo = "";
+    init = function() {
+      if (Nimbus.Auth.authorized()) {
         $('#loginView').animate({
           'opacity': '0.0'
-        }, 500, 'linear', function() {
+        }, 1000, 'linear', function() {
           $('#loginView').css({
             'display': 'none'
           });
@@ -51,15 +24,33 @@
             'display': 'block'
           }, 500, 'linear');
         });
-        return console.log("changed");
+        Todos = Nimbus.Model.setup('Todos', ['title', 'completed']);
+        return Todos.sync_all(function() {
+          var data, datas, _i, _len;
+          datas = Todos.all();
+          for (_i = 0, _len = datas.length; _i < _len; _i++) {
+            data = datas[_i];
+            $scope.todos.push(data);
+          }
+          return $scope.$apply();
+        });
       }
     };
-    return $scope.$watch('$scope.show', watchFn, true);
-  });
-
-  todoApp.controller('todoListViewController', function($scope) {
+    Nimbus.Auth.app_ready_func = init;
+    $scope.addNewTodo = function() {
+      $scope.newTodo = $scope.newTodo.replace("/(^\s*)|(\s$)/g", "");
+      if ($scope.newTodo.length) {
+        alert($scope.newTodo);
+        $scope.todos.push(Todos.create({
+          "title": $scope.newTodo,
+          "completed": false
+        }));
+        return $scope.newTodo = "";
+      }
+    };
     return $scope.logout = function() {
-      return window.todoList.logout();
+      Nimbus.Auth.logout();
+      return window.location.reload();
     };
   });
 

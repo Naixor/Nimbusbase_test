@@ -27,21 +27,49 @@
 			}
 			#logout {
 				margin-top: -8em;
-				margin-left: 9em;
+				margin-left: 29em;
+			}
+			input[type=text] {
+				width:16em !important;
+				height: 2em;
+				font-size: 2em;
+			}
+			input[type=submit] {
+				height: 2em;
+				font-size: 2em;
+			}
+			button {
+				width: 2em !important;
+				height:2em !important;
+				font-size: 2em;
 			}
    		</style>
 	</head>
 	<body ng-app="todoApp">
-		<section id="loginView" ng-controller="LoginController">
+		<section id="loginView">
 			<h1>Nimbus based to do List</h1>
-			<a class="btn btn-success" ng-click="loginAction('Dropbox')">Login With DropBox</a>
+			<a class="btn btn-success" onclick="Nimbus.Auth.authorize('Dropbox')">Login With DropBox</a>
 		</br>
-			<a class="btn btn-success" ng-click="loginAction('GDrive')">Login With Google Drive</a>
+			<a class="btn btn-success" onclick="Nimbus.Auth.authorize('GDrive')">Login With Google Drive</a>
 		</section>
 
-		<section id="todoListView" ng-controller="todoListViewController">
+		<section id="todoListView" ng-controller="todoListController">
 			<h1>Todo List</h1>
 			<a id="logout" ng-click="logout()" class="btn btn-danger">Log out</a>
+			<form class="form-inline" ng-submit="addNewTodo()">
+				<div class="form-group">
+					<input type="text" class="form-control" placeholder="Add what you want to do" ng-model="newTodo"></input>				
+					<input type="submit" value="Add" class="btn btn-success"></input>
+				</div>
+			</form>
+			<div id="list">
+				<form class="form-inline" ng-repeat="todo in todos">
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="Add what you want to do" ng-model="todo.title" disabled></input>				
+						<button type="button" class="close" aria-hidden="true">&times;</button>
+					</div>
+				</form>
+			</div>
 		</section>
 
 		<script src="jquery.js"></script>
