@@ -4,11 +4,32 @@
 
   todoApp = angular.module('todoApp', []);
 
+  String.prototype.trim = function() {
+    return this.replace("/(^\s*)|(\s$)/g", "");
+  };
+
+  Array.prototype.deepCopy = function(arr) {
+    var data, newArr, _i, _len;
+    newArr = [];
+    for (_i = 0, _len = arr.length; _i < _len; _i++) {
+      data = arr[_i];
+      newArr.push(data);
+    }
+    return newArr;
+  };
+
   todoApp.controller('todoListController', function($scope) {
-    var Todos, init;
-    Todos = [];
+    var Todos, completedThings, init, nowEdit;
+    Todos = {};
     $scope.todos = [];
+    $scope.AllComleted = "Completed";
     $scope.newTodo = "";
+    nowEdit = {
+      "title": "",
+      "index": -1
+    };
+    $scope.totalNotComleted = 0;
+    $scope.totalComleted = 0;
     init = function() {
       if (Nimbus.Auth.authorized()) {
         $('#loginView').animate({
@@ -31,21 +52,148 @@
           for (_i = 0, _len = datas.length; _i < _len; _i++) {
             data = datas[_i];
             $scope.todos.push(data);
+            if (data.completed) {
+              $scope.totalComleted++;
+            } else {
+              $scope.totalNotComleted++;
+            }
           }
           return $scope.$apply();
         });
       }
     };
     Nimbus.Auth.app_ready_func = init;
+    completedThings = function(com) {
+      if (com) {
+        $scope.totalComleted++;
+        return $scope.totalNotComleted--;
+      } else {
+        $scope.totalComleted--;
+        return $scope.totalNotComleted++;
+      }
+    };
     $scope.addNewTodo = function() {
-      $scope.newTodo = $scope.newTodo.replace("/(^\s*)|(\s$)/g", "");
+      $scope.newTodo = $scope.newTodo.trim();
       if ($scope.newTodo.length) {
-        alert($scope.newTodo);
         $scope.todos.push(Todos.create({
           "title": $scope.newTodo,
           "completed": false
         }));
-        return $scope.newTodo = "";
+        $scope.newTodo = "";
+        return $scope.totalNotComleted++;
+      }
+    };
+    $scope.changeCompleted = function(todo) {
+      var todoc;
+      todoc = Todos.find(todo.id);
+      if (todo.completed) {
+        todoc.completed = false;
+        todo.completed = false;
+      } else {
+        todo.completed = true;
+        todoc.completed = true;
+      }
+      todoc.save();
+      return completedThings(todo.completed);
+    };
+    $scope.removeTodo = function(todo, index) {
+      if (todo.completed) {
+        $scope.totalComleted--;
+      } else {
+        $scope.totalNotComleted--;
+      }
+      (Todos.find(todo.id)).destroy();
+      $('#list li').eq(index).animate({
+        "-webkit-transform": "translateX(-1em)",
+        "opacity": "0.0"
+      }, 400, function() {
+        $scope.todos.splice($scope.todos.indexOf(todo), 1);
+        return $scope.$apply();
+      });
+    };
+    $scope.editTodo = function(index) {
+      var label;
+      label = '#label' + index;
+      $(label).removeAttr("disabled");
+      $(label).focus();
+      return nowEdit.index = index;
+    };
+    $scope.doneEditTitle = function(todo) {
+      var label, todot;
+      nowEdit.title = $scope.todos[nowEdit.index].title.trim();
+      console.log(nowEdit.title);
+      todot = Todos.find(todo.id);
+      if (nowEdit.title.length) {
+        todot.title = nowEdit.title;
+        todot.save();
+      } else {
+        $scope.removeTodo(todo);
+      }
+      label = '#label' + nowEdit.index;
+      $(label).attr("disabled", "disabled");
+      return nowEdit = {
+        "title": "",
+        "index": -1
+      };
+    };
+    $scope.disFilter = function() {
+      var data, _i, _len, _ref;
+      $scope.todos = [];
+      _ref = Todos.all();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        data = _ref[_i];
+        $scope.todos.push(data);
+      }
+      return $scope.$apply();
+    };
+    $scope.filterNotCompleted = function() {
+      var data, _i, _len, _ref;
+      $scope.todos = [];
+      _ref = Todos.findAllByAttribute("completed", false);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        data = _ref[_i];
+        $scope.todos.push(data);
+      }
+      return $scope.$apply();
+    };
+    $scope.filterCompleted = function() {
+      var data, _i, _len, _ref;
+      $scope.todos = [];
+      _ref = Todos.findAllByAttribute("completed", true);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        data = _ref[_i];
+        $scope.todos.push(data);
+      }
+      return $scope.$apply();
+    };
+    $scope.MarkAll = function(mark) {
+      var t, _i, _j, _len, _len1, _ref, _ref1;
+      $scope.disFilter();
+      switch (mark) {
+        case "Completed":
+          $scope.AllComleted = "NotCompleted";
+          Todos.each(function(data) {
+            return data.updateAttribute("completed", true);
+          });
+          _ref = $scope.todos;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            t = _ref[_i];
+            t.completed = true;
+          }
+          $scope.totalComleted = $scope.todos.length;
+          return $scope.totalNotComleted = 0;
+        case "NotCompleted":
+          $scope.AllComleted = "Completed";
+          Todos.each(function(data) {
+            return data.updateAttribute("completed", false);
+          });
+          _ref1 = $scope.todos;
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            t = _ref1[_j];
+            t.completed = false;
+          }
+          $scope.totalNotComleted = $scope.todos.length;
+          return $scope.totalComleted = 0;
       }
     };
     return $scope.logout = function() {
