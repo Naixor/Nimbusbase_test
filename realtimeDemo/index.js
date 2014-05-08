@@ -14,6 +14,7 @@
     $scope.shared = false;
     $scope.isLoaded = false;
     $scope.realtimefile = {};
+    $scope.femail = "";
     $scope.authorize = function() {
       var objAuth;
       objAuth = {
@@ -36,7 +37,10 @@
       };
     };
     $scope.shareClient = function() {
-      return window.create_share_client();
+      Nimbus.Client.GDrive.add_share_user_real($scope.femail, function() {
+        return console.log("add real share:" + $scope.femail);
+      });
+      return window.c_file.id;
     };
     appReady = function() {
       if (Nimbus.Client.GDrive.check_auth) {
