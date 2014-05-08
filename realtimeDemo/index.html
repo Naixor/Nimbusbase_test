@@ -72,6 +72,12 @@
 				<button ng-click="shareClient()" ng-disabled="shared">Share</button>
 			</li>
 			<li>
+				<select>
+					<option ng-repeat="user in users" value="#{user.id}">{{user.name}}</option>
+				</select>
+				<button ng-click="getShareUser()">Get Shared users</button>
+			</li>
+			<li>
 				<div>
 					<textarea id="editer1" rows="15" cols="50" ng-model="realtimeData" ng-disabled="!isLoaded"></textarea>
 					<textarea id="editer2" rows="15" cols="50" disabled="true"></textarea>
