@@ -73,6 +73,7 @@
         Nimbus.Client.GDrive.get_shared_users_real(function(users) {
           var user, _i, _len;
           console.log(users);
+          $scope.users = [];
           for (_i = 0, _len = users.length; _i < _len; _i++) {
             user = users[_i];
             $scope.users.push(user);

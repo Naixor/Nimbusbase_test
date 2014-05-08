@@ -11,6 +11,8 @@ app.controller 'realtimeController', ($scope) ->
 	$scope.shared = false
 	$scope.isLoaded = false
 	$scope.realtimefile = {}
+	$scope.femail = ""
+	$scope.users = []
 
 	$scope.authorize = ->
 		objAuth = 
@@ -29,17 +31,44 @@ app.controller 'realtimeController', ($scope) ->
 			console.log "Authorized sucess!"
 
 	$scope.shareClient = ->
-		window.create_share_client()
+		Nimbus.Client.GDrive.add_share_user_real $scope.femail, ->
+			console.log "add real share:#{$scope.femail}"
+		window.c_file.id 
+
+	$scope.getShareUser = ->
+		Nimbus.Client.GDrive.get_shared_users_real (users) ->
+			console.log users
+			for user in users 
+				$scope.users.push user
+			$scope.$apply()
+
+	fileLoaded = (doc) ->
+		string = doc.getModel().getRoot().get 'todo'
+		edit2.value = string.get "text"
+		gapi.drive.realtime.databinding.bindString string.get "text", edit2
 
 	appReady = ->
 		if Nimbus.Client.GDrive.check_auth
+			window.showChangeText = edit2
 			$scope.authorized = true
 			# console.log "todo:#{window.todo}"
 			console.log "c_file.id:#{window.c_file.id}"
 			$scope.realtimeData = window.todo.get "text"
 			Nimbus.Model.Realtime.set_objectchanged_callback (e)->
 				console.log "changed!"
+				# gapi.drive.realtime.load(c_file.id, fileLoaded, initModel, handleErrors)
 				edit2.value = window.todo.get "text"
+
+			Nimbus.Client.GDrive.get_shared_users_real (users) ->
+				console.log users
+				$scope.users = []
+				for user in users 
+					$scope.users.push user
+				$scope.$apply()
+
+			Nimbus.Client.GDrive.getFile c_file.id, (para) ->
+				Nimbus.Client.GDrive.readFile para.selfLink, (readFile) ->
+					window.readFile = readFile
 
 			edit1.onkeyup = (e)->
 				window.todo.set "text", edit1.value
@@ -65,9 +94,7 @@ window.loadFunc = ->
       		"secret": ""
       		"app_name": ""
     	"synchronous": true
-	Nimbus.Auth.setup objAuth
-	Nimbus.Auth.authorize 'GDrive'
-	Nimbus.Auth.authrized_callback = ->
-		console.log "Authorized sucess!"
+	Nimbus.Auth.setup objAuth 
+
 
 
