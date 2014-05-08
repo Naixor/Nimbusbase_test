@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+"http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>NimbusBase Test</title>
+	
+	<script>
+	window.CLIENT_ID = '424243246254-n6b2v8j4j09723ktif41ln247n75pnts.apps.googleusercontent.com';
+	window.SCOPES = 'https://www.googleapis.com/auth/drive';
+	
+	  window.handleClientLoad = function() {
+	  	console.log("AUTH CALLED");
+	  	
+		return gapi.auth.authorize({
+		client_id: CLIENT_ID,
+		scope: SCOPES,
+		immediate: true
+		}, function(data){ console.log(data) });
+	  };		
+	</script>
+
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.1.2/coffee-script.min.js"></script>
+	<script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+	
+	<script src="app/async_counter.js"></script>
+	<script src="app/set.js"></script>
+	
+	<!--- Nimbus code -->
+	<script src="app/nimbusbase.js"></script>
+	<script src="app/Nimbus.model.general_sync.js"></script>
+	<script src="app/Nimbus.model.local.js"></script>
+	<script src="adaptors/Nimble.Model.Dropbox.js"></script>
+	<script src="adaptors/Nimbus.Auth.Dropbox_auth.js"></script>
+
+
+	<!-- GDrive code-->
+	<script src="Client/Nimbus.Client.GDrive.js"></script>
+	<script src="adaptors/Nimbus.Model.GDrive.js"></script>
+
+	<!-- Dropbox code -->
+	<script src="Client/Nimbus.Client.Dropbox.js"></script>
+	<script src="Client/Nimbus.Binary.Dropbox.js"></script>
+	
+	<script src="app/initialize.js"></script>
+	
+	<!-- Dropbox js code -->
+	<script src="dropboxjs/drop.js"></script>
+	<script src="testing/test_gdrive.js"></script>
+	
+	<link rel="stylesheet" href="testing/qunit-1.10.0.css">
+</head>
+<body>
+
+  <div id="qunit"></div>
+  
+  <script src="http://code.jquery.com/qunit/qunit-1.10.0.js"></script>
+  <script src="testing/testing2.js"></script>
+
+</body>
+</html>

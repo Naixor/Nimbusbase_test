@@ -1,0 +1,58 @@
+Overall structure:
+1. Use google client api library for authentication
+2. Just get it working on a website, don't worry about anything else
+3. Use folders on their drive as the main storage, and apps under it, like how we do it now.
+
+Authentication:
+1. Input, Api key and secret
+2. Output, api client authorized
+
+Tutorial:
+1. Need a tutorial on this
+
+Files:
+Nimbus.Client.GDrive
+-The client which write, and read and delete files from Google Drive (Done, needs to add the delayed op stuff to the requests)
+
+Nimbus.Binary.GDrive
+-The client which write and read and delete binary files from Google Drive
+
+Nimbus.Model.GDrive
+-The nimbusbase adaptor which calls the clients and sync the models
+
+1. Need to create a folder for the entire app
+2. Need to create a folder for each app
+3. Need to store the google id for everything, the app, the object definition folders, the actual objects. Also need to store download link for each link.
+4. Need to check if this folders already exists, ways are using the metadata query and checking local query
+5. implement all the normal functions implemented for Dropbox for Google Drive
+
+Nimbus.Auth.GDrive_auth
+-Auth override for google Drive
+
+Sharing:
+-Need to create a api for sharing data
+
+-Rudimentry data sharing can be on the app level
+-just add/remove/delete emails
+-domain sharing can be added later
+-Should have user object for the share(?)
+
+*On constructs
+
+oneOp -> many things waiting for one thing to happen, execute those things after the one thing
+
+delayOp -> one thing happens after many things happen
+
+firstOp -> two events are fired, the callback should be executed after they both happen, probably can be done by oneOp?
+
+Auth
+
+you should be able to auth two things at a time
+
+Do this by
+
+1. Setting up a structure with all the info at the beginning
+2. Not initializing anything until auth is called
+3. Setup things and then run the default auth
+4. Save the authed setting so it would run as normal everytime on initialization
+

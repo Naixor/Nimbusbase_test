@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <script type="text/javascript" src="../nimbus.js"></script>
+    <script type="text/javascript">
+	//Nimbus.Auth.key = '1067089945845-ikqrspvgeiltddsedvshc7sp0tlli4t2.apps.googleusercontent.com';
+	//Nimbus.Auth.secret = 'https://www.googleapis.com/auth/drive';
+	//Nimbus.Auth.app_name = 'test-gdrive-upload';
+	//Nimbus.Auth.service = 'GDrive'; 
+    //window.loaded = true;  
+    window.debug = true; 
+
+    sync_object = {
+      "GDrive": {
+        "key": "1067089945845-ikqrspvgeiltddsedvshc7sp0tlli4t2.apps.googleusercontent.com",
+        // uncomment following to test with localhost
+        //"key": "424243246254-n6b2v8j4j09723ktif41ln247n75pnts.apps.googleusercontent.com",
+        "scope": "https://www.googleapis.com/auth/drive",
+        "app_name": "test-gdrive-upload"
+      },
+      "Dropbox": {
+        "key": "",
+        "secret": "",
+        "app_name": ""
+      }
+    };
+
+    function init()
+    {    	
+        Nimbus.Auth.setup(sync_object);
+        Nimbus.Auth.authorize('GDrive');
+    }
+
+    function upload()
+    {    	
+    	Nimbus.Binary.upload_file(document.getElementById('file').files[0], function(e){console.log("upload ok")})
+    }
+    </script>
+  </head>
+  <body onload="init()">
+    <input type="file" id="file" onchange="upload()"  />
+  </body>
+</html>

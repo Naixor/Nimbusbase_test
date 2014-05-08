@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <script type="text/javascript" src="coffee-script.1.1.2.js"></script>
+    <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+    <script type="text/javascript" src="../app/nimbusbase.js"></script>
+    <script type="text/javascript" src="../app/async_counter.js"></script>
+    <script type="text/javascript" src="../app/set.js"></script>
+    <script type="text/javascript" src="../app/Nimbus.model.local.js"></script>
+    <script type="text/javascript" src="../app/Nimbus.model.general_sync.js"></script>
+    <script type="text/javascript" src="../adaptors/Nimbus.Model.GDrive.js"></script>
+    <script type="text/javascript" src="../Client/Nimbus.Client.GDrive.js"></script>    
+    <script type="text/javascript" src="../Client/Nimbus.Binary.GDrive.js"></script>
+    <script type="text/javascript">
+	Nimbus.Auth.key = '1067089945845-ikqrspvgeiltddsedvshc7sp0tlli4t2.apps.googleusercontent.com';
+	Nimbus.Auth.secret = 'https://www.googleapis.com/auth/drive';
+	Nimbus.Auth.app_name = 'test-gdrive-upload';
+	Nimbus.Auth.service = 'GDrive'; 
+    window.loaded = true;   
+    function init()
+    {    	
+        binary_setup();
+    	Nimbus.Client.GDrive.Binary.initialize_client(function(){
+            model_initialize(binary);
+        });
+    }
+
+    function upload()
+    {    	
+    	Nimbus.Client.GDrive.Binary.upload_file(document.getElementById('file').files[0], function(e){console.log("upload ok")})
+    }
+    </script>
+  </head>
+  <body onload="init()">
+    <input type="file" id="file" onchange="upload()"  />
+  </body>
+</html>

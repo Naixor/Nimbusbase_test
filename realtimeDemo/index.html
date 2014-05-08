@@ -1,0 +1,88 @@
+<html lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>NimbusBase Realtime Test</title>
+	
+	<script src="NimbusBase/analytics/base64.js"></script>
+	
+	<!-- <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.1.2/coffee-script.min.js"></script> -->
+	
+	<!-- pouch db -->
+	<script src="NimbusBase/pouchdb.min.js"></script>
+	
+	<script src="NimbusBase/app/first.js"></script>
+	<script src="NimbusBase/app/async_counter.js"></script>
+	<script src="NimbusBase/app/set.js"></script>
+	
+	<!--- Nimbus code -->
+	<script src="NimbusBase/app/nimbusbase.js"></script>
+	<script src="NimbusBase/app/Nimbus.model.general_sync.js"></script>
+	<script src="NimbusBase/app/Nimbus.model.local.js"></script>
+	<script src="NimbusBase/app/Nimbus.model.localsync.js"></script>
+	<script src="NimbusBase/adaptors/Nimble.Model.Dropbox.js"></script>
+	<script src="NimbusBase/adaptors/Nimbus.Auth.Dropbox_auth.js"></script>
+
+	<!-- GDrive code-->
+	<script src="NimbusBase/Client/Nimbus.Client.GDrive.js"></script>
+	<script src="NimbusBase/Client/Nimbus.Binary.GDrive.js"></script>
+	<script src="NimbusBase/adaptors/Nimbus.Model.GDrive.js"></script>
+	<script src="NimbusBase/adaptors/Nimbus.Auth.GDrive.js"></script>
+
+	<!-- realtime stuff -->
+	<script src="NimbusBase/realtime/Nimbus.Model.Realtime.js"></script>
+
+	<!-- Dropbox code -->
+	<script src="NimbusBase/Client/Nimbus.Client.Dropbox.js"></script>
+	<script src="NimbusBase/Client/Nimbus.Binary.Dropbox.js"></script>
+	
+	<!-- Multi code -->
+	<script src="NimbusBase/adaptors/Nimbus.Auth.Multi.js"></script>
+	
+	<script src="NimbusBase/app/initialize.js"></script>
+	
+	<!-- Dropbox js code -->
+	<script src="NimbusBase/dropboxjs/drop.js"></script>
+	<script src="NimbusBase/testing/test_multi.js"></script>
+	
+	
+	<!-- analytics -->
+	<script src="NimbusBase/analytics/tracking.mixpanel.js"></script>
+  	<!--
+	<script src="all.js"></script>
+	-->
+	<!-- QUnit Test -->
+	<link rel="stylesheet" type="text/css" href="NimbusBase/testing/qunit/qunit-1.12.0.css">
+    <script type="text/javascript" src="NimbusBase/testing/qunit/qunit-1.12.0.js"></script>
+	<script type="text/javascript" src="NimbusBase/testing/qunit/qunit_gdrive.js"></script>
+	
+	<style type="text/css">
+		ul li {
+			list-style: none;
+		}
+	</style>
+</head>
+<body ng-app="Realtime" onload="">
+	<div ng-controller="realtimeController">
+		<ul>
+			<li>
+				<button ng-click="authorize()" ng-disabled="authoirzed">You Must Authorize</button>
+			</li>
+			<li>
+				<button ng-click="shareClient()" ng-disabled="shared">Share</button>
+			</li>
+			<li>
+				<div>
+					<textarea id="editer1" rows="15" cols="50" ng-model="realtimeData" ng-disabled="!isLoaded"></textarea>
+					<textarea id="editer2" rows="15" cols="50" disabled="true"></textarea>
+				</div>
+			</li>
+		</ul>
+	
+	</div>
+
+
+	<script src="angular.min.js"></script>
+	<!-- local Code -->
+	<script type="text/javascript" src="index.js"></script>
+</body>
+</html>

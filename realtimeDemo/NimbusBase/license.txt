@@ -1,0 +1,3 @@
+//Copyright NimbusBase (NimbusBase.com)
+//Version 2.1
+//License details at http://nimbusbase.com/pricing.html

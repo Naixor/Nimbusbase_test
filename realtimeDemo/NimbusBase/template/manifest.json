@@ -1,0 +1,25 @@
+{
+  "name": "NimbusBase Extension",
+  "description": "NimbusBase Chrome Extension Template",
+  "version": "1.0",
+  "manifest_version": 2,  
+  // "app": {
+    // "launch": {
+      // "local_path": "app.html"
+    // }
+  // },
+  "background": {
+      "scripts": ["placeholder.js"]
+  },
+  "browser_action" : {
+      "default_popup": "app.html"
+  },
+  "permissions": [
+    "tabs",
+    "storage",
+    "http://*/*", 
+    "https://*/*",
+    "unlimitedStorage"
+  ],
+  "content_security_policy": "script-src 'self' https://apis.google.com https://ajax.googleapis.com; object-src 'self'"
+}
