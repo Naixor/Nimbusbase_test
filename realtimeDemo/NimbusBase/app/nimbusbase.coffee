@@ -517,9 +517,11 @@
         
       model
     
-    created: (sub) ->
+    created: (sub, callback) ->
       @records = {}
       @attributes = (if @attributes then makeArray(@attributes) else [])
+      if callback?
+        callback(@attributes)
     
     find: (id) ->
       record = @records[id]
@@ -579,23 +581,27 @@
     count: ->
       @recordsValues().length
     
-    deleteAll: ->
+    deleteAll: (callback) ->
       for key of @records
         delete @records[key]
+      callback() if callback?    
     
-    destroyAll: ->
+    destroyAll: (callback)->
       for key of @records
         @records[key].destroy()
+      callback() if callback?
     
-    update: (id, atts) ->
+    update: (id, atts, callback) ->
       @find(id).updateAttributes atts
+      callback() if callback
     
-    create: (atts) ->
+    create: (atts, callback) ->
       record = @init(atts)
       record.save()
+      callback(record) if callback?
     
-    destroy: (id) ->
-      @find(id).destroy()
+    destroy: (id, callback) ->
+      @find(id).destroy callback
     
     sync: (callback) ->
       @bind "change", callback
@@ -673,8 +679,8 @@
     
     eql: (rec) ->
       rec and rec.id == @id and rec.parent() == @parent()
-    
-    save: ->
+
+    save: (callback) ->
       error = @validate()
       if error
         @trigger "error", this, error
@@ -682,19 +688,38 @@
       @trigger "beforeSave", this
       (if @newRecord then @create() else @update())
       @trigger "save", this
+
+      callback(@newRecord) if callback?
+
+      @change_callback @newRecord
+      
       this
-    
-    updateAttribute: (name, value) ->
+
+    change_callback: (newRecord) ->
+
+    setChange_callback: (_change_callback) ->
+      @change_callback = _change_callback
+
+    updateAttribute: (name, value, callback) ->
       this[name] = value
-      @save()
+      if callback?
+        @save(callback)
+      else
+        @save()
     
-    updateAttributes: (atts) ->
+    updateAttributes: (atts, callback) ->
       @load atts
-      @save()
+      if callback?
+        @save(callback)
+      else
+        @save()
     
-    destroy: ->
+    destroy: (callback)->
       @trigger "beforeDestroy", this
       delete @parent().records[@id]
+
+      if callback?
+        callback()
       
       @destroyed = true
       @trigger "destroy", this

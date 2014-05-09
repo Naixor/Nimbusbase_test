@@ -5,17 +5,17 @@
   app = angular.module('Realtime', []);
 
   app.controller('realtimeController', function($scope) {
-    var Docs, appReady, edit1, edit2, fileLoaded;
+    var Docs, TodoModel, appReady, edit1, edit2;
     Docs = {};
     edit1 = document.getElementById('editer1');
     edit2 = document.getElementById('editer2');
-    $scope.realtimeData = "Loading...";
+    window.wTodos = TodoModel = {};
+    window.debug = false;
     $scope.authorized = false;
     $scope.shared = false;
     $scope.isLoaded = false;
-    $scope.realtimefile = {};
-    $scope.femail = "";
-    $scope.users = [];
+    $scope.Todos = [];
+    $scope.Todos2 = [];
     $scope.authorize = function() {
       var objAuth;
       objAuth = {
@@ -38,58 +38,46 @@
       };
     };
     $scope.shareClient = function() {
-      Nimbus.Client.GDrive.add_share_user_real($scope.femail, function() {
+      return Nimbus.Client.GDrive.add_share_user_real($scope.femail, function() {
         return console.log("add real share:" + $scope.femail);
-      });
-      return window.c_file.id;
+      }, window.c_file.id);
     };
-    $scope.getShareUser = function() {
-      return Nimbus.Client.GDrive.get_shared_users_real(function(users) {
-        var user, _i, _len;
-        console.log(users);
-        for (_i = 0, _len = users.length; _i < _len; _i++) {
-          user = users[_i];
-          $scope.users.push(user);
-        }
-        return $scope.$apply();
+    $scope.add = function() {
+      return TodoModel.create({
+        "title": (new Date()).toString()
+      }, function(model) {
+        console.log("callback create:", model);
+        return $scope.Todos.push(model);
       });
     };
-    fileLoaded = function(doc) {
-      var string;
-      string = doc.getModel().getRoot().get('todo');
-      edit2.value = string.get("text");
-      return gapi.drive.realtime.databinding.bindString(string.get("text", edit2));
+    $scope.save = function(todo) {
+      var t;
+      t = TodoModel.find(todo.id);
+      t.title = document.getElementById('editer1').value;
+      return t.save(function(newRecord) {
+        return console.log("callback newRecord:", newRecord);
+      });
     };
     appReady = function() {
-      if (Nimbus.Client.GDrive.check_auth) {
-        window.showChangeText = edit2;
-        $scope.authorized = true;
-        console.log("c_file.id:" + window.c_file.id);
-        $scope.realtimeData = window.todo.get("text");
-        Nimbus.Model.Realtime.set_objectchanged_callback(function(e) {
-          console.log("changed!");
-          return edit2.value = window.todo.get("text");
-        });
-        Nimbus.Client.GDrive.get_shared_users_real(function(users) {
-          var user, _i, _len;
-          console.log(users);
-          $scope.users = [];
-          for (_i = 0, _len = users.length; _i < _len; _i++) {
-            user = users[_i];
-            $scope.users.push(user);
+      if (Nimbus.Auth.authorized) {
+        window.wTodoModel = TodoModel = Nimbus.Model.setup("Todos", ["title"]);
+        return TodoModel.sync_all(function() {
+          var t, _i, _len, _ref;
+          _ref = TodoModel.all();
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            t = _ref[_i];
+            $scope.Todos.push(t);
           }
-          return $scope.$apply();
-        });
-        Nimbus.Client.GDrive.getFile(c_file.id, function(para) {
-          return Nimbus.Client.GDrive.readFile(para.selfLink, function(readFile) {
-            return window.readFile = readFile;
+          TodoModel.set_objectchanged_callback(function(currentEvent, Obj, serverevent) {
+            console.log("currentEvent:" + currentEvent);
+            console.log("Obj:" + Obj);
+            console.log("serverevent:" + serverevent);
+            return document.getElementById('editer2').value = Obj;
           });
-        });
-        edit1.onkeyup = function(e) {
-          return window.todo.set("text", edit1.value);
-        };
-        return window.startRealtime(function() {
-          return $scope.isLoaded = true;
+          window.startRealtime(function() {
+            return console.log("RealTimeStart!");
+          });
+          return $scope.$apply();
         });
       } else {
         alert("You have not authorize!");

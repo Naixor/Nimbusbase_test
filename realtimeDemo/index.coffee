@@ -6,13 +6,13 @@ app.controller 'realtimeController', ($scope) ->
 	edit1 = document.getElementById('editer1')
 	edit2 = document.getElementById('editer2')
 
-	$scope.realtimeData = "Loading..."
+	window.wTodos = TodoModel = {}
+	window.debug = false
 	$scope.authorized = false
 	$scope.shared = false
 	$scope.isLoaded = false
-	$scope.realtimefile = {}
-	$scope.femail = ""
-	$scope.users = []
+	$scope.Todos = []
+	$scope.Todos2 = []
 
 	$scope.authorize = ->
 		objAuth = 
@@ -33,48 +33,63 @@ app.controller 'realtimeController', ($scope) ->
 	$scope.shareClient = ->
 		Nimbus.Client.GDrive.add_share_user_real $scope.femail, ->
 			console.log "add real share:#{$scope.femail}"
-		window.c_file.id 
+		,window.c_file.id 
 
-	$scope.getShareUser = ->
-		Nimbus.Client.GDrive.get_shared_users_real (users) ->
-			console.log users
-			for user in users 
-				$scope.users.push user
-			$scope.$apply()
+	$scope.add = ->
+		TodoModel.create {"title": (new Date()).toString()}, (model)->
+			console.log "callback create:", model
+			$scope.Todos.push model
 
-	fileLoaded = (doc) ->
-		string = doc.getModel().getRoot().get 'todo'
-		edit2.value = string.get "text"
-		gapi.drive.realtime.databinding.bindString string.get "text", edit2
+	$scope.save = (todo) ->
+		t = TodoModel.find todo.id
+		t.title = document.getElementById('editer1').value
+		
+		t.save (newRecord)->
+			console.log "callback newRecord:", newRecord
 
 	appReady = ->
-		if Nimbus.Client.GDrive.check_auth
-			window.showChangeText = edit2
-			$scope.authorized = true
-			# console.log "todo:#{window.todo}"
-			console.log "c_file.id:#{window.c_file.id}"
-			$scope.realtimeData = window.todo.get "text"
-			Nimbus.Model.Realtime.set_objectchanged_callback (e)->
-				console.log "changed!"
-				# gapi.drive.realtime.load(c_file.id, fileLoaded, initModel, handleErrors)
-				edit2.value = window.todo.get "text"
+		if Nimbus.Auth.authorized
+			# window.showChangeText = edit2
+			# $scope.authorized = true
 
-			Nimbus.Client.GDrive.get_shared_users_real (users) ->
-				console.log users
-				$scope.users = []
-				for user in users 
-					$scope.users.push user
+			# $scope.realtimeData = window.todo.get "text"
+			# Nimbus.Model.Realtime.set_objectchanged_callback (e)->
+			# 	console.log "changed!"
+			# 	# gapi.drive.realtime.load(c_file.id, fileLoaded, initModel, handleErrors)
+			# 	edit2.value = window.todo.get "text"
+
+			# Nimbus.Client.GDrive.get_shared_users_real (users) ->
+			# 	console.log users
+			# 	$scope.users = []
+			# 	for user in users 
+			# 		$scope.users.push user
+			# 	$scope.$apply()
+
+			# Nimbus.Client.GDrive.getFile c_file.id, (para) ->
+			# 	Nimbus.Client.GDrive.readFile para.selfLink, (readFile) ->
+			# 		window.readFile = readFile
+
+			# window.startRealtime ->
+			# 	$scope.isLoaded = true
+			window.wTodoModel = TodoModel = Nimbus.Model.setup "Todos", ["title"]
+
+			
+
+			TodoModel.sync_all ->
+				for t in TodoModel.all()
+					$scope.Todos.push t
+
+				TodoModel.set_objectchanged_callback (currentEvent, Obj, serverevent)->
+					console.log "currentEvent:#{currentEvent}"
+					console.log "Obj:#{Obj}"
+					console.log "serverevent:#{serverevent}"
+					document.getElementById('editer2').value = Obj
+
+				window.startRealtime ->
+					console.log "RealTimeStart!"
+
 				$scope.$apply()
 
-			Nimbus.Client.GDrive.getFile c_file.id, (para) ->
-				Nimbus.Client.GDrive.readFile para.selfLink, (readFile) ->
-					window.readFile = readFile
-
-			edit1.onkeyup = (e)->
-				window.todo.set "text", edit1.value
-
-			window.startRealtime ->
-				$scope.isLoaded = true
 
 		else
 			alert "You have not authorize!"
@@ -95,6 +110,7 @@ window.loadFunc = ->
       		"app_name": ""
     	"synchronous": true
 	Nimbus.Auth.setup objAuth 
+
 
 
 

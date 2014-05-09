@@ -123,16 +123,16 @@
       if ((typeof callback) !== "function") {
         return console.log("Realtime OBJECT_CHANGED_CALLBACK should be function!");
       }
-      if (typeof window.realtime_objectchanged_callback === "undefined") {
-        return window.realtime_objectchanged_callback = callback;
+      if (typeof window.realtime_update_handler === "undefined") {
+        return window.realtime_update_handler = callback;
       } else {
-        delete window.realtime_objectchanged_callback;
-        return window.realtime_objectchanged_callback = callback;
+        delete window.realtime_update_handler;
+        return window.realtime_update_handler = callback;
       }
     },
     clear_objectchanged_callback: function() {
-      if (window.realtime_objectchanged_callback !== "undefined") {
-        return delete window.realtime_objectchanged_callback;
+      if (window.realtime_update_handler !== "undefined") {
+        return delete window.realtime_update_handler;
       }
     }
   };
@@ -185,17 +185,14 @@
       }
       log("EVENT: ", current_event, " OBJ: ", obj);
       if (window.realtime_update_handler != null) {
-        return window.realtime_update_handler(current_event, obj, event.isLocal);
+        return window.realtime_update_handler(current_event, obj, event);
       }
     };
     window.todo = doc.getModel().getRoot().get("todo");
     if (window.real_time_callback != null) {
       window.real_time_callback();
     }
-    window.todo.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, process_event);
-    if (window.realtime_objectchanged_callback !== "undefined") {
-      return todo.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, window.realtime_objectchanged_callback);
-    }
+    return window.todo.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, process_event);
   };
 
   window.create_share_client = function() {

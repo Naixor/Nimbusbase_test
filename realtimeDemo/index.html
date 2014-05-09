@@ -68,19 +68,15 @@
 				<button ng-click="authorize()" ng-disabled="authoirzed">You Must Authorize</button>
 			</li>
 			<li>
-				<input type="text" name="email" size="30" defaultValue="Input your friend's email" ng-model="femail"></input>
-				<button ng-click="shareClient()" ng-disabled="shared">Share</button>
+
 			</li>
 			<li>
-				<select>
-					<option ng-repeat="user in users" value="#{user.id}">{{user.name}}</option>
-				</select>
-				<button ng-click="getShareUser()">Get Shared users</button>
+				<button ng-click="add()">Add</button>
 			</li>
 			<li>
-				<div>
-					<textarea id="editer1" rows="15" cols="50" ng-model="realtimeData" ng-disabled="!isLoaded"></textarea>
-					<textarea id="editer2" rows="15" cols="50" disabled="true"></textarea>
+				<div ng-repeat="Todo in Todos">
+					<textarea id="editer1" rows="5" cols="50" ng-model="Todo.title" ng-keyup="save(Todo)"></textarea>
+					<textarea id="editer2" rows="5" cols="50" disabled="true"></textarea>
 				</div>
 			</li>
 		</ul>

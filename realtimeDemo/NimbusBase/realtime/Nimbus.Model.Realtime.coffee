@@ -122,18 +122,19 @@ Nimbus.Model.Realtime =
 
   ## Hy's new code in 2014.5.6 
   ## add a realtime OBJECT_CHANGED_CALLBACK
+  ## this should like this callback(current_event, obj,event)
   set_objectchanged_callback: (callback) ->
     if (typeof callback) isnt "function" 
       return console.log "Realtime OBJECT_CHANGED_CALLBACK should be function!"
-    if typeof window.realtime_objectchanged_callback is "undefined"
-      window.realtime_objectchanged_callback = callback
+    if typeof window.realtime_update_handler is "undefined"
+      window.realtime_update_handler = callback
     else
-      delete window.realtime_objectchanged_callback
-      window.realtime_objectchanged_callback = callback
+      delete window.realtime_update_handler
+      window.realtime_update_handler = callback
 
   clear_objectchanged_callback: ->
-    if window.realtime_objectchanged_callback isnt "undefined"
-      delete window.realtime_objectchanged_callback
+    if window.realtime_update_handler isnt "undefined"
+      delete window.realtime_update_handler
 
 ### initialization and model linking code ###
 window.initializeModel = (model) ->
@@ -182,7 +183,8 @@ window.onFileLoaded = (doc) ->
       current_event = "UPDATE"
     
     log("EVENT: ", current_event, " OBJ: ", obj)
-    window.realtime_update_handler(current_event, obj,event.isLocal) if window.realtime_update_handler?
+
+    window.realtime_update_handler(current_event, obj,event) if window.realtime_update_handler?
 
   window.todo = doc.getModel().getRoot().get("todo")
   
@@ -193,9 +195,6 @@ window.onFileLoaded = (doc) ->
   ## Hy's new code in 2014.5.6;
   ## add a callback when realtime OBJECT_CHANGED
   window.todo.addEventListener gapi.drive.realtime.EventType.VALUE_CHANGED, process_event
-  if window.realtime_objectchanged_callback isnt "undefined"
-    todo.addEventListener gapi.drive.realtime.EventType.VALUE_CHANGED, window.realtime_objectchanged_callback
-
 
 #create share client
 window.create_share_client= () ->
