@@ -75,8 +75,7 @@
             return document.getElementById('editer2').value = Obj.title;
           });
           window.startRealtime(function() {
-            console.log("RealTimeStart!");
-            return document.getElementById('id').disabled = false;
+            return console.log("RealTimeStart!");
           });
           return $scope.$apply();
         });
