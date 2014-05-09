@@ -72,10 +72,11 @@
             console.log("currentEvent:" + currentEvent);
             console.log("Obj:" + Obj);
             console.log("serverevent:" + serverevent);
-            return document.getElementById('editer2').value = Obj;
+            return document.getElementById('editer2').value = Obj.title;
           });
           window.startRealtime(function() {
-            return console.log("RealTimeStart!");
+            console.log("RealTimeStart!");
+            return document.getElementById('id').disabled = false;
           });
           return $scope.$apply();
         });
